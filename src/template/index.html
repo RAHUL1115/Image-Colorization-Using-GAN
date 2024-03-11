@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="app">
+      <h1 class="py-5 text-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-2xl font-semibold uppercase shadow-md">
+        Image Colorization
+      </h1>
+
+      <form class="mt-10 flex flex-col items-center space-y-5 p-5 rounded-md shadow-md" @submit.prevent="handleSubmit">
+        <input type="file" name="file" @change="handleImageUpload" />
+        <button type="submit" class="p-2 text-white rounded cursor-pointer bg-gradient-to-r hover:bg-gradient-to-l transition-all duration-500  ease-in-out from-indigo-500 via-purple-500 to-pink-500">
+          Colorize
+        </button>
+      </form>
+
+      <div class="space-y-5 mt-10" v-if="loading">
+        <div class="flex items-center justify-center">
+          <div class="w-8 h-8 border-4 border-gray-400 rounded-full animate-spin border-t-blue-500"></div>
+          <p class="text-center ml-3">Processing image...</p>
+        </div>
+      </div>
+      <div class="space-y-5 mt-10" v-else-if="error">
+        <p class="text-center text-red-500">
+          An error occurred: {{ errorMessage }}. Please try again.
+        </p>
+        <a class="text-blue-500 underline" href="/">Reload</a>
+      </div>
+
+      <div class="space-y-5 mt-10" v-else>
+        <div class="flex space-x-10 justify-center items-center rounded-md border border-gray-300 p-2">
+          <img class="w-52 h-52" :src="imageUrl" alt="Input Image" />
+          <img
+            class="w-52 h-52"
+            :src="processedImageUrl"
+            alt="Colorized Image"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const app = Vue.createApp({
+        data() {
+          return {
+            imageUrl: "/static/input.png",
+            processedImageUrl: "/static/output.png",
+            loading: false,
+            error: false,
+          };
+        },
+        methods: {
+          handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+              this.imageUrl = URL.createObjectURL(file);
+            } else {
+              this.imageUrl = null;
+            }
+          },
+          async handleSubmit() {
+            this.loading = true;
+            this.error = false;
+
+            const file = document.querySelector('input[type="file"]').files[0];
+            const base64Image = await this.convertToBase64(file);
+
+            try {
+              const response = await axios.post(
+                "/api/v1/process-image",
+                { image: base64Image }
+              );
+              this.processedImageUrl = response.data?.generatedImage;
+              console.log(response.data?.generatedImage);
+            } catch (error) {
+              console.error(error);
+              this.error = true;
+            } finally {
+              this.loading = false;
+            }
+          },
+
+          async convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = (error) => reject(error);
+            });
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
