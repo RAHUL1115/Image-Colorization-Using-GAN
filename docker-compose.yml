@@ -1,0 +1,10 @@
+version: "3.8"  # Adjust version if needed
+
+services:
+  my-app:
+    build: .  # Build the image from the current directory (./)
+    # volumes:
+      # - ./src:/srv/app/src:ro  # Mount the src directory read-only
+    command: pipenv run start  # Override the default CMD from Dockerfile
+    ports:
+      - 8000:8000

@@ -10,6 +10,8 @@ uvicorn = "*"
 jinja2 = "*"
 tensorflow = "*"
 pillow = "*"
+python-dotenv = "*"
+argparse = "*"
 
 [dev-packages]
 
@@ -17,5 +19,5 @@ pillow = "*"
 python_version = "3.11"
 
 [scripts]
-dev = "uvicorn index:app --reload --port 4141"
-start = "uvicorn index:app --port 8080"
+dev = "uvicorn index:app --reload --port 8000"
+start = "uvicorn index:app --port 8000"

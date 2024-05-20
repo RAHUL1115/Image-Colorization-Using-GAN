@@ -10,9 +10,12 @@ from io import BytesIO
 from PIL import Image
 import tensorflow as tf
 from tensorflow.python.keras.models import load_model
+from uvicorn import run
+import argparse
 
-# envs
+# set envs
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+PYTHON_ENV = os.getenv("PYTHON_ENV")
 
 # variables
 img_size = 120
