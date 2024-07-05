@@ -1,1 +1,1 @@
-# Image-Colorization-using-DL-MscProject
+# Image-Colorization-using-GAN (Generative Adversarial Network)
